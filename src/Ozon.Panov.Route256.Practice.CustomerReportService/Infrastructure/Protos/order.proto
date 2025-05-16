@@ -1,0 +1,48 @@
+syntax = "proto3";
+
+package ozon.route256.order_service.proto.order_grpc;
+option csharp_namespace = "Ozon.Route256.OrderService.Proto.OrderGrpc";
+
+import "google/protobuf/wrappers.proto";
+import "google/protobuf/timestamp.proto";
+import "google/api/annotations.proto";
+
+service OrderGrpc {
+  rpc V1QueryOrders (V1QueryOrdersRequest) returns (stream V1QueryOrdersResponse) {
+    option (google.api.http) = {
+      post: "/OrderGrpc/V1QueryOrders"
+      body: "*"
+    };
+  };
+}
+
+message V1QueryOrdersRequest {
+  repeated int64 order_ids = 1;
+  repeated int64 customer_ids = 2;
+  repeated int64 region_ids = 3;
+  int32 limit = 4;
+  int32 offset = 5;
+}
+
+message V1QueryOrdersResponse {
+  message Region {
+    int64 id = 1;
+    string name = 2;
+  }
+
+  int64 order_id = 1;
+  Region region = 2;
+  OrderStatus status = 3;
+  int64 customer_id = 4;
+  google.protobuf.StringValue comment = 5;
+  google.protobuf.Timestamp created_at = 6;
+
+  int64 total_count = 7;
+}
+
+enum OrderStatus{
+  ORDER_STATUS_UNDEFINED = 0;
+  ORDER_STATUS_NEW = 1;
+  ORDER_STATUS_CANCELED = 2;
+  ORDER_STATUS_DELIVERED = 3;
+}
